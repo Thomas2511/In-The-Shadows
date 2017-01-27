@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class ShadowObject : MonoBehaviour {
 
-	private float _sensitivity;
+	public float sensitivity;
 	private Vector3 _mouseReference;
 	private Vector3 _mouseOffset;
+	private Vector3 _targetPosition;
 
 	void Start ()
 	{
-		_sensitivity = 0.4f;
+		sensitivity = 0.4f;
 	}
 
 	void Update()
@@ -32,7 +33,7 @@ public class ShadowObject : MonoBehaviour {
 			_mouseOffset = (Input.mousePosition - _mouseReference);
 
 			// rotate
-			transform.Rotate (new Vector3 (-(_mouseOffset.x + _mouseOffset.y + _mouseOffset.z) * _sensitivity, 0.0f, 0.0f));
+			transform.Rotate (new Vector3 (-(_mouseOffset.x + _mouseOffset.y + _mouseOffset.z) * sensitivity, 0.0f, 0.0f));
 
 			// store mouse
 			_mouseReference = Input.mousePosition;
@@ -48,23 +49,58 @@ public class ShadowObject : MonoBehaviour {
 		{
 			// offset
 			_mouseOffset = (Input.mousePosition - _mouseReference);
+			_targetPosition = Camera.main.WorldToScreenPoint (transform.position);
+			Debug.Log (_mouseOffset);
 
 			// rotate
-			if (_mouseOffset.x > transform.position.x && _mouseOffset.y > transform.position.y)
-				transform.Rotate(new Vector3(0.0f, (_mouseOffset.x + _mouseOffset.y) * _sensitivity,0.0f));
-
-			else if (_mouseOffset.x < transform.position.x && _mouseOffset.y > transform.position.y)
-				transform.Rotate(new Vector3(0.0f, (-_mouseOffset.x + _mouseOffset.y) * _sensitivity,0.0f));
-
-			else if (_mouseOffset.x > transform.position.x && _mouseOffset.y < transform.position.y)
-				transform.Rotate(new Vector3(0.0f, (_mouseOffset.x - _mouseOffset.y) * _sensitivity,0.0f));
-
-			else if (_mouseOffset.x < transform.position.x && _mouseOffset.y < transform.position.y)
-				transform.Rotate(new Vector3(0.0f, -(_mouseOffset.x + _mouseOffset.y) * _sensitivity,0.0f));
+			Check_Rotation();
 
 			// store mouse
 			_mouseReference = Input.mousePosition;
 		}
 
+	}
+
+	void Check_Rotation()
+	{
+		// Going east, north west quarter
+		if (_mouseOffset.x > 0.0f && _mouseOffset.y > 0.0f && Input.mousePosition.x < _targetPosition.x) {
+			transform.Rotate (new Vector3 (0.0f, (Mathf.Abs (_mouseOffset.x) + Mathf.Abs (_mouseOffset.y)) * sensitivity, 0.0f));
+		}
+
+		// Going west, south west quarter
+		else if (_mouseOffset.x < 0.0f && _mouseOffset.y > 0.0f && Input.mousePosition.x < _targetPosition.x) {
+			transform.Rotate (new Vector3 (0.0f, (Mathf.Abs (_mouseOffset.x) + Mathf.Abs (_mouseOffset.y)) * sensitivity, 0.0f));
+		}
+
+		// Going west, south east quarter
+		else if (_mouseOffset.x < 0.0f && _mouseOffset.y < 0.0f && Input.mousePosition.x > _targetPosition.x) {
+			transform.Rotate (new Vector3 (0.0f, (Mathf.Abs (_mouseOffset.x) + Mathf.Abs (_mouseOffset.y)) * sensitivity, 0.0f));
+		}
+
+		// Going east, north east quarter
+		else if (_mouseOffset.x > 0.0f && _mouseOffset.y < 0.0f && Input.mousePosition.x > _targetPosition.x) {
+			transform.Rotate (new Vector3 (0.0f, (Mathf.Abs (_mouseOffset.x) + Mathf.Abs (_mouseOffset.y)) * sensitivity, 0.0f));
+		}
+
+		// Going west, north west quarter
+		else if (_mouseOffset.x < 0.0f && _mouseOffset.y < 0.0f && Input.mousePosition.x < _targetPosition.x) {
+			transform.Rotate (new Vector3 (0.0f, -(Mathf.Abs (_mouseOffset.x) + Mathf.Abs (_mouseOffset.y)) * sensitivity, 0.0f));
+		}
+
+		// Going east, south west quarter
+		else if (_mouseOffset.x > 0.0f && _mouseOffset.y < 0.0f && Input.mousePosition.x < _targetPosition.x) {
+			transform.Rotate (new Vector3 (0.0f, -(Mathf.Abs (_mouseOffset.x) + Mathf.Abs (_mouseOffset.y)) * sensitivity, 0.0f));
+		}
+
+		// Going east, south east quarter
+		else if (_mouseOffset.x > 0.0f && _mouseOffset.y > 0.0f && Input.mousePosition.x > _targetPosition.x) {
+			transform.Rotate (new Vector3 (0.0f, -(Mathf.Abs (_mouseOffset.x) + Mathf.Abs (_mouseOffset.y)) * sensitivity, 0.0f));
+		}
+
+		// Going west, north east quarter
+		else if (_mouseOffset.x < 0.0f && _mouseOffset.y > 0.0f && Input.mousePosition.x > _targetPosition.x) {
+			transform.Rotate (new Vector3 (0.0f, -(Mathf.Abs (_mouseOffset.x) + Mathf.Abs (_mouseOffset.y)) * sensitivity, 0.0f));
+		}
 	}
 }
