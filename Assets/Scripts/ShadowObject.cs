@@ -5,102 +5,50 @@ using UnityEngine;
 public class ShadowObject : MonoBehaviour {
 
 	public float sensitivity;
-	private Vector3 _mouseReference;
 	private Vector3 _mouseOffset;
-	private Vector3 _targetPosition;
+    private bool _gameover;
 
-	void Start ()
+    void OnEnable()    {        GameManager.OnSuccess += GameOver;    }    void OnDisable()    {        GameManager.OnSuccess -= GameOver;    }
+
+    void Start ()
 	{
-		sensitivity = 0.4f;
-	}
+        _gameover = false;
+    }
 
 	void Update()
 	{
-		
+        if (_gameover) {
+            return;
+        }
+
+        if (Input.GetMouseButtonDown(0)) {
+            Cursor.visible = false;
+        }
+
+        if (!Input.GetMouseButton(0)) {
+            Cursor.visible = true;
+            return;
+        }
+
+        _mouseOffset = new Vector3(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"), 0.0f);
+
+        if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) {
+            transform.Rotate(new Vector3(0.0f, -_mouseOffset.x * sensitivity, 0.0f), Space.World);
+        }
+        else if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) {
+            transform.Rotate(new Vector3(-_mouseOffset.y * sensitivity, 0.0f, 0.0f), Space.World);
+        }
+        else if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) {
+            transform.Translate(_mouseOffset * sensitivity * Time.deltaTime, Space.World);
+        }
+        else {
+            transform.Rotate(new Vector3(-_mouseOffset.y * sensitivity, -_mouseOffset.x * sensitivity, 0.0f), Space.World);
+        }
+            
 	}
 
-	void OnMouseDown()
-	{
-		// store mouse
-		_mouseReference = Input.mousePosition;
-	}
-
-	void OnMouseDrag()
-	{
-		// horizontal rotation
-		if (Input.GetKey (KeyCode.LeftControl) || Input.GetKey (KeyCode.RightControl)) {
-			// offset
-			_mouseOffset = (Input.mousePosition - _mouseReference);
-
-			// rotate
-			transform.Rotate (new Vector3 (-(_mouseOffset.x + _mouseOffset.y + _mouseOffset.z) * sensitivity, 0.0f, 0.0f));
-
-			// store mouse
-			_mouseReference = Input.mousePosition;
-		}
-
-		else if (Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift))
-		{
-			
-		}
-
-		// vertical rotation
-		else
-		{
-			// offset
-			_mouseOffset = (Input.mousePosition - _mouseReference);
-			_targetPosition = Camera.main.WorldToScreenPoint (transform.position);
-			Debug.Log (_mouseOffset);
-
-			// rotate
-			Check_Rotation();
-
-			// store mouse
-			_mouseReference = Input.mousePosition;
-		}
-
-	}
-
-	void Check_Rotation()
-	{
-		// Going east, north west quarter
-		if (_mouseOffset.x > 0.0f && _mouseOffset.y > 0.0f && Input.mousePosition.x < _targetPosition.x) {
-			transform.Rotate (new Vector3 (0.0f, (Mathf.Abs (_mouseOffset.x) + Mathf.Abs (_mouseOffset.y)) * sensitivity, 0.0f));
-		}
-
-		// Going west, south west quarter
-		else if (_mouseOffset.x < 0.0f && _mouseOffset.y > 0.0f && Input.mousePosition.x < _targetPosition.x) {
-			transform.Rotate (new Vector3 (0.0f, (Mathf.Abs (_mouseOffset.x) + Mathf.Abs (_mouseOffset.y)) * sensitivity, 0.0f));
-		}
-
-		// Going west, south east quarter
-		else if (_mouseOffset.x < 0.0f && _mouseOffset.y < 0.0f && Input.mousePosition.x > _targetPosition.x) {
-			transform.Rotate (new Vector3 (0.0f, (Mathf.Abs (_mouseOffset.x) + Mathf.Abs (_mouseOffset.y)) * sensitivity, 0.0f));
-		}
-
-		// Going east, north east quarter
-		else if (_mouseOffset.x > 0.0f && _mouseOffset.y < 0.0f && Input.mousePosition.x > _targetPosition.x) {
-			transform.Rotate (new Vector3 (0.0f, (Mathf.Abs (_mouseOffset.x) + Mathf.Abs (_mouseOffset.y)) * sensitivity, 0.0f));
-		}
-
-		// Going west, north west quarter
-		else if (_mouseOffset.x < 0.0f && _mouseOffset.y < 0.0f && Input.mousePosition.x < _targetPosition.x) {
-			transform.Rotate (new Vector3 (0.0f, -(Mathf.Abs (_mouseOffset.x) + Mathf.Abs (_mouseOffset.y)) * sensitivity, 0.0f));
-		}
-
-		// Going east, south west quarter
-		else if (_mouseOffset.x > 0.0f && _mouseOffset.y < 0.0f && Input.mousePosition.x < _targetPosition.x) {
-			transform.Rotate (new Vector3 (0.0f, -(Mathf.Abs (_mouseOffset.x) + Mathf.Abs (_mouseOffset.y)) * sensitivity, 0.0f));
-		}
-
-		// Going east, south east quarter
-		else if (_mouseOffset.x > 0.0f && _mouseOffset.y > 0.0f && Input.mousePosition.x > _targetPosition.x) {
-			transform.Rotate (new Vector3 (0.0f, -(Mathf.Abs (_mouseOffset.x) + Mathf.Abs (_mouseOffset.y)) * sensitivity, 0.0f));
-		}
-
-		// Going west, north east quarter
-		else if (_mouseOffset.x < 0.0f && _mouseOffset.y > 0.0f && Input.mousePosition.x > _targetPosition.x) {
-			transform.Rotate (new Vector3 (0.0f, -(Mathf.Abs (_mouseOffset.x) + Mathf.Abs (_mouseOffset.y)) * sensitivity, 0.0f));
-		}
-	}
+    void GameOver()
+    {
+        _gameover = true;
+    }
 }
