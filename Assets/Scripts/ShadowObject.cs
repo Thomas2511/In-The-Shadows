@@ -4,20 +4,24 @@ using UnityEngine;
 
 public class ShadowObject : MonoBehaviour {
 
-	public float sensitivity;
-	private Vector3 _mouseOffset;
-    private bool _gameover;
+    public bool horizontalAvailable;
+    public bool verticalAvailable;
+    public bool moveElementsAvailable;
+    public bool freeMovementAvailable;
+    public float sensitivity;
+	private Vector3 mouseOffset;
+    private bool controlsEnabled;
 
-    void OnEnable()    {        GameManager.OnSuccess += GameOver;    }    void OnDisable()    {        GameManager.OnSuccess -= GameOver;    }
-
-    void Start ()
-	{
-        _gameover = false;
+    public void Start()
+    {
+        controlsEnabled = true;
     }
 
-	void Update()
+	public void Update()
 	{
-        if (_gameover) {
+        if (!Input.GetMouseButton(0) || !controlsEnabled)
+        {
+            Cursor.visible = true;
             return;
         }
 
@@ -25,30 +29,54 @@ public class ShadowObject : MonoBehaviour {
             Cursor.visible = false;
         }
 
-        if (!Input.GetMouseButton(0)) {
-            Cursor.visible = true;
-            return;
-        }
+        mouseOffset = new Vector3(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"), 0.0f);
 
-        _mouseOffset = new Vector3(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"), 0.0f);
-
-        if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) {
-            transform.Rotate(new Vector3(0.0f, -_mouseOffset.x * sensitivity, 0.0f), Space.World);
-        }
-        else if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) {
-            transform.Rotate(new Vector3(-_mouseOffset.y * sensitivity, 0.0f, 0.0f), Space.World);
-        }
-        else if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) {
-            transform.Translate(_mouseOffset * sensitivity * Time.deltaTime, Space.World);
-        }
-        else {
-            transform.Rotate(new Vector3(-_mouseOffset.y * sensitivity, -_mouseOffset.x * sensitivity, 0.0f), Space.World);
-        }
+        HorizontalMovement();
+        VerticalMovement();
+        FreeMovement();
+        MoveElements();
             
 	}
 
-    void GameOver()
+    void HorizontalMovement()
     {
-        _gameover = true;
+        if ((Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) && horizontalAvailable)
+        {
+            transform.Rotate(new Vector3(0.0f, -mouseOffset.x * sensitivity, 0.0f), Space.World);
+        }
+    }
+
+    void VerticalMovement()
+    {
+        if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && verticalAvailable)
+        {
+            transform.Rotate(new Vector3(-mouseOffset.y * sensitivity, 0.0f, 0.0f), Space.World);
+        }
+    }
+
+    void FreeMovement()
+    {
+        if (freeMovementAvailable)
+        {
+            transform.Rotate(new Vector3(-mouseOffset.y * sensitivity, -mouseOffset.x * sensitivity, 0.0f), Space.World);
+        }
+    }
+
+    void MoveElements()
+    {
+        if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && moveElementsAvailable)
+        {
+            transform.Translate(mouseOffset * sensitivity * Time.deltaTime, Space.World);
+        }
+    }
+
+    public void EnableControls()
+    {
+        controlsEnabled = true;
+    }
+
+    public void DisableControls()
+    {
+        controlsEnabled = false;
     }
 }
