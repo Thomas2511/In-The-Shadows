@@ -5,19 +5,20 @@ using UnityEngine.UI;
 
 public class MapText : MonoBehaviour {
 
-    Ray ray;
-    RaycastHit hit;
-
-    void Update()
+    List<string> levelAdvices = new List<string>
     {
-        ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out hit))
-        {
-            this.gameObject.GetComponent<Text>().text = hit.collider.gameObject.name;
-        }
-        else
-        {
-            this.gameObject.GetComponent<Text>().text = "";
-        }
+        "Afraid of mice",
+        "Nice around five o'clock",
+        "Answer to Everything"
+    };
+
+    public void SetText(int level)
+    {
+        this.gameObject.GetComponent<Text>().text = levelAdvices[level];
+    }
+
+    public void ResetText()
+    {
+        this.gameObject.GetComponent<Text>().text = "";
     }
 }

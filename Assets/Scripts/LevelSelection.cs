@@ -4,35 +4,17 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class LevelManager : MonoBehaviour {
+public class LevelSelection : MonoBehaviour {
 
     public List<GameObject> levelGroups;
     public List<GameObject> levelIcons;
     public List<Sprite> levelSprites;
     public int totalLevels;
 
-    public void LoadLevel(int index)
-    {
-        SceneManager.LoadScene(index);
-    }
-
-    public void LoadLevel(string levelName)
-    {
-        SceneManager.LoadScene(levelName);
-    }
-
-    public void QuitGame()
-    {
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-        Application.Quit ();
-#endif
-    }
-
     public void ResetPlayerPrefs()
     {
         PlayerPrefs.DeleteKey("Current Level");
+        UnlockToCurrent();
     }
 
     public void UnlockAllLevels()
