@@ -14,26 +14,26 @@ public class ShadowObject : MonoBehaviour {
     public float successX;
     public float successY;
     public float successZ;
+	public float detailLevel;
 
     public void Update()
 	{
-        if (!Input.GetMouseButton(0) || GameManager.instance.state != GameManager.stateType.PLAYING)
-        {
+		if (GameManager.instance.isPaused)
+			return;
+
+		if (Input.GetMouseButtonUp(0))
             Cursor.visible = true;
-            return;
-        }
 
-        if (Input.GetMouseButtonDown(0)) {
+        if (Input.GetMouseButton(0)) {
             Cursor.visible = false;
+
+			mouseOffset = new Vector3(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"), 0.0f);
+
+			HorizontalMovement();
+			VerticalMovement();
+			FreeMovement();
+			MoveElements();
         }
-
-        mouseOffset = new Vector3(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"), 0.0f);
-
-        HorizontalMovement();
-        VerticalMovement();
-        FreeMovement();
-        MoveElements();
-            
 	}
 
     void HorizontalMovement()

@@ -9,7 +9,6 @@ public class LevelSelection : MonoBehaviour {
     public List<GameObject> levelGroups;
     public List<GameObject> levelIcons;
     public List<Sprite> levelSprites;
-    public int totalLevels;
 
     public void ResetPlayerPrefs()
     {
@@ -23,7 +22,7 @@ public class LevelSelection : MonoBehaviour {
         {
             level.SetActive(true);
         }
-        for (int i = 0; i < totalLevels; i++)
+		for (int i = 0; i < 4; i++)
         {
             levelIcons[i].GetComponent<Image>().sprite = levelSprites[i];
         }
@@ -61,7 +60,7 @@ public class LevelSelection : MonoBehaviour {
             levelIcons[i].GetComponent<CanvasGroup>().interactable = true;
             levelIcons[i].GetComponent<CanvasGroup>().blocksRaycasts = true;
         }
-        levelIcons[currentLvl].GetComponent<Image>().sprite = levelSprites[4];
+		levelIcons[currentLvl].GetComponent<Image>().sprite = levelSprites[4];
     }
 
     void Start()
