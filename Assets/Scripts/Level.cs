@@ -30,7 +30,24 @@ public class Level : MonoBehaviour {
 
             if (Quaternion.Angle(shadow.transform.rotation, successRotation) < 3.0f && !Input.GetMouseButton(0))
                 return true;
+        }
 
+        return false;
+    }
+
+    bool IsSuccessCollider()
+    {
+        if (shadowObjects.Count <= 1) return true;
+        else
+        {
+            foreach (ShadowObject shadow in shadowObjects)
+            {
+                foreach (ShadowObject other in shadowObjects)
+                {
+                    if (other != shadow && other.gameObject.GetComponentInChildren<BoxCollider>().bounds.Intersects(shadow.GetComponentInChildren<BoxCollider>().bounds))
+                        return true;
+                }
+            }
         }
         return false;
     }
