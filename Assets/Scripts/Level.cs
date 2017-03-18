@@ -15,13 +15,32 @@ public class Level : MonoBehaviour {
 	}
 
 	void Update () {
-		if (IsSuccess() && success != true)
+        if (Input.GetKeyUp(KeyCode.Tab))
+            SelectNextObject();
+
+		if (IsSuccess() && IsSuccessCollider() && success != true)
         {
             success = true;
             if (OnLevelEnd != null)
                 OnLevelEnd();
         }
 	}
+
+    void SelectNextObject()
+    {
+        for (int i = 0; i < shadowObjects.Count; i++)
+        {
+            if (shadowObjects[i].isSelected)
+            {
+                shadowObjects[i].isSelected = false;
+                if (i == shadowObjects.Count - 1)
+                    shadowObjects[0].isSelected = true;
+                else
+                    shadowObjects[i + 1].isSelected = true;
+                return;
+            }
+        }
+    }
 
     bool IsSuccess()
     {

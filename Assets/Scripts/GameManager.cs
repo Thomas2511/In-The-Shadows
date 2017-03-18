@@ -78,7 +78,7 @@ public class GameManager : MonoBehaviour {
 	{
 		if (PlayerPrefs.HasKey("Current Level"))
 		{
-			if (PlayerPrefs.GetInt("Current Level") < 3)
+			if (PlayerPrefs.GetInt("Current Level") < 4 && PlayerPrefs.GetInt("Current Level") == SceneManager.GetActiveScene().buildIndex - 1)
 				PlayerPrefs.SetInt("Current Level", PlayerPrefs.GetInt("Current Level") + 1);
 		}
 		else

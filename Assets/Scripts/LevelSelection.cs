@@ -22,7 +22,7 @@ public class LevelSelection : MonoBehaviour {
         {
             level.SetActive(true);
         }
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < 3; i++)
         {
             levelIcons[i].GetComponent<Image>().sprite = levelSprites[i];
         }
@@ -60,7 +60,7 @@ public class LevelSelection : MonoBehaviour {
             levelIcons[i].GetComponent<CanvasGroup>().interactable = true;
             levelIcons[i].GetComponent<CanvasGroup>().blocksRaycasts = true;
         }
-		levelIcons[currentLvl].GetComponent<Image>().sprite = levelSprites[4];
+		levelIcons[currentLvl].GetComponent<Image>().sprite = levelSprites[3];
     }
 
     void Start()
@@ -68,3 +68,4 @@ public class LevelSelection : MonoBehaviour {
         UnlockToCurrent();
     }
 }
+
