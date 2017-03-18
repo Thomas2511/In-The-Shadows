@@ -4,12 +4,15 @@ using UnityEngine;
 
 public class Level : MonoBehaviour {
 
-    public bool success = false;
     public List<ShadowObject> shadowObjects;
     public delegate void LevelEnded();
     public static event LevelEnded OnLevelEnd;
-    public Spotlight spotlight;
-    public SuccessParticles particles;
+
+	private bool success;
+
+	void Start () {
+		success = false;
+	}
 
 	void Update () {
 		if (IsSuccess() && success != true)
@@ -26,9 +29,9 @@ public class Level : MonoBehaviour {
         {
             Quaternion successRotation = Quaternion.Euler(new Vector3(shadow.successX, shadow.successY, shadow.successZ));
 
-            Debug.Log("Quaternion angle : " + Quaternion.Angle(shadow.transform.rotation, successRotation));
+            //Debug.Log("Quaternion angle : " + Quaternion.Angle(shadow.transform.rotation, successRotation));
 
-            if (Quaternion.Angle(shadow.transform.rotation, successRotation) < 3.0f && !Input.GetMouseButton(0))
+			if (Quaternion.Angle(shadow.transform.rotation, successRotation) < shadow.detailLevel && !Input.GetMouseButton(0))
                 return true;
         }
 

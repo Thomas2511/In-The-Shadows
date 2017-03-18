@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour {
 
     public static GameManager instance = null;
 
-    public enum stateType
+    private enum stateType
     {
         DEFAULT,
         PAUSED,
@@ -15,7 +15,20 @@ public class GameManager : MonoBehaviour {
         ENDED
     };
 
-    public stateType state;
+	private stateType _state { get; set; }
+	public bool isPaused { get { return _state != stateType.PLAYING; } }
+
+	void OnEnable()
+	{
+		Level.OnLevelEnd += SetStateToEnd;
+		SceneManager.activeSceneChanged += SetStateToPlay;
+	}
+
+	void OnDisable()
+	{
+		Level.OnLevelEnd -= SetStateToEnd;
+		SceneManager.activeSceneChanged -= SetStateToPlay;
+	}
 
     void Awake()
     {
@@ -25,57 +38,71 @@ public class GameManager : MonoBehaviour {
             Destroy(gameObject);
 
         DontDestroyOnLoad(gameObject);
-        state = stateType.PLAYING;
     }
 
     void Update()
     {
-        switch(state)
-        {
-            case stateType.PLAYING:
-                break;
-            case stateType.PAUSED:
-                break;
-            case stateType.ENDED:
-                break;
-            default:
-                Debug.Log("ERROR: Unknown game state: " + state);
-                break;
-        }
+		if (Input.GetKeyUp(KeyCode.Escape)) {
+			if (_state == stateType.PLAYING)
+				_state = stateType.PAUSED;
+			else if (_state == stateType.PAUSED)
+				_state = stateType.PLAYING;
+		}
+		ReactOnState ();
     }
 
-    void StateToEnd()
-    {
-        this.state = stateType.ENDED;
+	void ReactOnState() 
+	{
+		switch(_state)
+		{
+			case stateType.PLAYING:
+				break;
+			case stateType.PAUSED:
+				DisplayCursor ();
+				break;
+			case stateType.ENDED:
+				DisplayCursor ();
+				break;
+			default:
+				Debug.Log("ERROR: Unknown game state: " + _state);
+				break;
+		}
+	}
 
-        if (PlayerPrefs.HasKey("Current Level"))
-        {
-            if (PlayerPrefs.GetInt("Current Level") < 3)
-                PlayerPrefs.SetInt("Current Level", PlayerPrefs.GetInt("Current Level") + 1);
-        }
-        else
-            PlayerPrefs.SetInt("Current Level", 0);
-    }
+	void DisplayCursor()
+	{
+		Cursor.visible = true;
+	}
 
-    void OnEnable()
+	void LevelValidated()
+	{
+		if (PlayerPrefs.HasKey("Current Level"))
+		{
+			if (PlayerPrefs.GetInt("Current Level") < 3)
+				PlayerPrefs.SetInt("Current Level", PlayerPrefs.GetInt("Current Level") + 1);
+		}
+		else
+			PlayerPrefs.SetInt("Current Level", 1);
+	}
+
+	void SetStateToPlay(Scene previousScene, Scene currentScene)
+	{
+		_state = stateType.PLAYING;
+	}
+
+    void SetStateToEnd()
     {
-        Level.OnLevelEnd += StateToEnd;
-    }
-    
-    void OnDisable()
-    {
-        Level.OnLevelEnd -= StateToEnd;
+		LevelValidated();
+        _state = stateType.ENDED;   
     }
 
     public void LoadLevel(int index)
     {
-        state = stateType.PLAYING;
         SceneManager.LoadScene(index);
     }
 
     public void LoadLevel(string levelName)
     {
-        state = stateType.PLAYING;
         SceneManager.LoadScene(levelName);
     }
 
