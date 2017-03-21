@@ -14,9 +14,12 @@ public class ShadowObject : MonoBehaviour {
     public Material currentMaterial;
 
     public bool isSelected;
-    public float successX;
-    public float successY;
-    public float successZ;
+    public float[] successX;
+    public float[] successY;
+    public float[] successZ;
+	public bool anyX;
+	public bool anyY;
+	public bool anyZ;
 	public float detailLevel;
 
     void Start()

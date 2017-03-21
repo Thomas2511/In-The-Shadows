@@ -5,6 +5,8 @@ using UnityEngine;
 public class Level : MonoBehaviour {
 
     public List<ShadowObject> shadowObjects;
+	public List<BoxCollider> successRotations;
+
     public delegate void LevelEnded();
     public static event LevelEnded OnLevelEnd;
 
@@ -18,7 +20,7 @@ public class Level : MonoBehaviour {
         if (Input.GetKeyUp(KeyCode.Tab))
             SelectNextObject();
 
-		if (IsSuccess() && IsSuccessCollider() && success != true)
+		if (!Input.GetMouseButton(0) && (IsSuccess() || IsSuccessCollider()) && success != true)
         {
             success = true;
             if (OnLevelEnd != null)
@@ -44,28 +46,39 @@ public class Level : MonoBehaviour {
 
     bool IsSuccess()
     {
-        foreach (ShadowObject shadow in shadowObjects)
-        {
-            Quaternion successRotation = Quaternion.Euler(new Vector3(shadow.successX, shadow.successY, shadow.successZ));
+		if (shadowObjects.Count <= 1) {
+			bool xIsOk = false;
+			bool yIsOk = false;
+			bool zIsOk = false;
 
-            //Debug.Log("Quaternion angle : " + Quaternion.Angle(shadow.transform.rotation, successRotation));
-
-			if (Quaternion.Angle(shadow.transform.rotation, successRotation) < shadow.detailLevel && !Input.GetMouseButton(0))
-                return true;
-        }
-
-        return false;
+			foreach (float i in shadowObjects[0].successX) {
+				if ((shadowObjects[0].transform.localRotation.eulerAngles.x % 180.0f) >= i - shadowObjects[0].detailLevel &&
+					(shadowObjects[0].transform.localRotation.eulerAngles.x % 180.0f) <= i + shadowObjects[0].detailLevel)
+					xIsOk = true;
+			}
+			foreach (float j in shadowObjects[0].successY) {
+				if ((shadowObjects[0].transform.localRotation.eulerAngles.y % 180.0f) >= j - shadowObjects[0].detailLevel &&
+					(shadowObjects[0].transform.localRotation.eulerAngles.y % 180.0f) <= j + shadowObjects[0].detailLevel)
+					yIsOk = true;
+			}
+			foreach (float k in shadowObjects[0].successZ) {
+				if ((shadowObjects[0].transform.localRotation.eulerAngles.z % 180.0f) >= k - shadowObjects[0].detailLevel &&
+					(shadowObjects[0].transform.localRotation.eulerAngles.z % 180.0f) <= k + shadowObjects[0].detailLevel)
+					zIsOk = true;
+			}
+			if ((xIsOk || shadowObjects[0].anyX) && (yIsOk || shadowObjects[0].anyY) && (zIsOk || shadowObjects[0].anyZ))
+				return true;
+		}
+		return false;
     }
+	
 
     bool IsSuccessCollider()
     {
-        if (shadowObjects.Count <= 1) return true;
-        else
-        {
+		if (shadowObjects.Count > 1) {
             foreach (ShadowObject shadow in shadowObjects)
             {
-                foreach (ShadowObject other in shadowObjects)
-                {
+                foreach (ShadowObject other in shadowObjects) {
                     if (other != shadow && other.gameObject.GetComponentInChildren<BoxCollider>().bounds.Intersects(shadow.GetComponentInChildren<BoxCollider>().bounds))
                         return true;
                 }

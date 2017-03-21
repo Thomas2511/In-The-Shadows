@@ -9,6 +9,7 @@ public class LevelSelection : MonoBehaviour {
     public List<GameObject> levelGroups;
     public List<GameObject> levelIcons;
     public List<Sprite> levelSprites;
+	public int maxLevel;
 
     public void ResetPlayerPrefs()
     {
@@ -22,7 +23,7 @@ public class LevelSelection : MonoBehaviour {
         {
             level.SetActive(true);
         }
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < maxLevel; i++)
         {
             levelIcons[i].GetComponent<Image>().sprite = levelSprites[i];
         }
@@ -50,8 +51,9 @@ public class LevelSelection : MonoBehaviour {
 
     public void UnlockToCurrent()
     {
-        ResetLevelProgress();
         int currentLvl = (PlayerPrefs.HasKey("Current Level") ? PlayerPrefs.GetInt("Current Level") : 0);
+
+		ResetLevelProgress();
 
         for (int i = 0; i <= currentLvl; i++)
         {
@@ -60,7 +62,8 @@ public class LevelSelection : MonoBehaviour {
             levelIcons[i].GetComponent<CanvasGroup>().interactable = true;
             levelIcons[i].GetComponent<CanvasGroup>().blocksRaycasts = true;
         }
-		levelIcons[currentLvl].GetComponent<Image>().sprite = levelSprites[3];
+		if (currentLvl < maxLevel)
+			levelIcons[currentLvl].GetComponent<Image>().sprite = levelSprites[levelSprites.Count - 1];
     }
 
     void Start()
