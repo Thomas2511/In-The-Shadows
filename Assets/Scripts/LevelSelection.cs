@@ -55,15 +55,16 @@ public class LevelSelection : MonoBehaviour {
 
 		ResetLevelProgress();
 
-        for (int i = 0; i <= currentLvl; i++)
+		for (int i = 0; i <= currentLvl && i <= maxLevel; i++)
         {
             levelGroups[i].SetActive(true);
             levelIcons[i].GetComponent<CanvasGroup>().alpha = 1;
             levelIcons[i].GetComponent<CanvasGroup>().interactable = true;
             levelIcons[i].GetComponent<CanvasGroup>().blocksRaycasts = true;
         }
-		if (currentLvl < maxLevel)
-			levelIcons[currentLvl].GetComponent<Image>().sprite = levelSprites[levelSprites.Count - 1];
+		if (currentLvl <= maxLevel) {
+			levelIcons [currentLvl].GetComponent<Image> ().sprite = levelSprites [levelSprites.Count - 1];
+		}
     }
 
     void Start()

@@ -78,11 +78,11 @@ public class GameManager : MonoBehaviour {
 	{
 		if (PlayerPrefs.HasKey("Current Level"))
 		{
-			if (PlayerPrefs.GetInt("Current Level") < 2 && PlayerPrefs.GetInt("Current Level") == SceneManager.GetActiveScene().buildIndex - 1)
+			if (PlayerPrefs.GetInt("Current Level") == SceneManager.GetActiveScene().buildIndex - 1)
 				PlayerPrefs.SetInt("Current Level", PlayerPrefs.GetInt("Current Level") + 1);
 		}
 		else
-			PlayerPrefs.SetInt("Current Level", 0);
+			PlayerPrefs.SetInt("Current Level", 1);
 	}
 
 	void SetStateToPlay(Scene previousScene, Scene currentScene)
